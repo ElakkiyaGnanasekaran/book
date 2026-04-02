@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Management</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+        button {
+            padding: 8px 12px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1> Book Management System</h1>
+
+<h3>Add Book</h3>
+
+<input type="text" id="name" placeholder="Book Name">
+<input type="text" id="author" placeholder="Author">
+<input type="number" id="price" placeholder="Price">
+
+<button onclick="addBook()">Add Book</button>
+
+<h3>All Books</h3>
+
+<button onclick="getBooks()">Load Books</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="bookTable"></tbody>
+</table>
+
+<script>
+
+    const API = "http://localhost:8080/books";
+
+    // Add Book
+    function addBook() {
+        const book = {
+            name: document.getElementById("name").value,
+            author: document.getElementById("author").value,
+            price: document.getElementById("price").value
+        };
+
+        fetch(API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(book)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Book Added!");
+            getBooks();
+        });
+    }
+
+    // Get Books
+    function getBooks() {
+        fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            let table = "";
+            data.forEach(book => {
+                table += `
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>${book.name}</td>
+                        <td>${book.author}</td>
+                        <td>${book.price}</td>
+                        <td>
+                            <button onclick="deleteBook(${book.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById("bookTable").innerHTML = table;
+        });
+    }
+
+    // Delete Book
+    function deleteBook(id) {
+        fetch(API + "/" + id, {
+            method: "DELETE"
+        })
+        .then(() => {
+            alert("Deleted!");
+            getBooks();
+        });
+    }
+
+</script>
+
+</body>
+</html>
