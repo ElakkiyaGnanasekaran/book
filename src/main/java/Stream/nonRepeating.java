@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class nonRepeating {
     public static void main(String args[]){
 
-      String str = "swiss";
+      String str = "Java";
 
 Character result = str.chars()
         .mapToObj(c -> (char) c)
